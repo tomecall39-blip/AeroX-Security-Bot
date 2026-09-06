@@ -27,11 +27,11 @@ const c = {
 
 const banner = `
 ${c.pink}${c.bright}   █████╗ ███████╗██████╗  ██████╗ ██╗  ██╗
-  ██╔══██╗██╔════╝██╔══██╗██╔═══██╗╚██╗██╔╝
-  ███████║█████╗  ██████╔╝██║   ██║ ╚███╔╝ 
-  ██╔══██║██╔══╝  ██╔══██╗██║   ██║ ██╔██╗ 
-  ██║  ██║███████╗██║  ██║╚██████╔╝██╔╝ ██╗
-  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${c.reset}
+   ██╔══██╗██╔════╝██╔══██╗██╔═══██╗╚██╗██╔╝
+   ███████║█████╗  ██████╔╝██║   ██║ ╚███╔╝ 
+   ██╔══██║██╔══╝  ██╔══██╗██║   ██║ ██╔██╗ 
+   ██║  ██║███████╗██║  ██║╚██████╔╝██╔╝ ██╗
+   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝${c.reset}
 ${c.purple}${c.bright}  ─────────────────────────────────────────${c.reset}`;
 
 let shardConfig   = {};
@@ -148,13 +148,23 @@ const loadEvents = (directory) => {
 };
 loadEvents(eventsPath);
 
-client.once("clientReady", () => {
+client.once("clientReady", async () => {
   console.log(banner);
   console.log(`${c.purple}${c.bright}  All Commands Loaded ${c.white}✅  ${c.gray}(${cmdCount} commands)${c.reset}`);
   console.log(`${c.purple}${c.bright}  All Events Loaded   ${c.white}✅  ${c.gray}(${evtCount} events)${c.reset}`);
   console.log(`${c.purple}${c.bright}  ─────────────────────────────────────${c.reset}`);
   console.log(`${c.pink}${c.bright}  ${client.user.tag}  ${c.gray}[ping: ${client.ws.ping}ms]${c.reset}`);
   console.log(`${c.purple}${c.bright}  ─────────────────────────────────────${c.reset}\n`);
+
+  // Register slash commands
+  try {
+    const { registerSlashCommands } = require("./utils/slashCommandHandler");
+    const token = process.env.DISCORD_TOKEN || config.token;
+    const clientId = client.user.id;
+    await registerSlashCommands(token, clientId);
+  } catch (error) {
+    console.error("Failed to register slash commands:", error);
+  }
 });
 
 const token = process.env.DISCORD_TOKEN || config.token;
