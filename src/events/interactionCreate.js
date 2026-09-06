@@ -2,29 +2,12 @@ const { ContainerBuilder, TextDisplayBuilder, MessageFlags } = require("discord.
 
 module.exports = (client) => {
     client.on("interactionCreate", async (interaction) => {
+        // Slash commands are disabled - only prefix commands are supported
         if (interaction.isChatInputCommand()) {
-            const cmd = client.commands.get(interaction.commandName);
-            if (!cmd || !cmd.runSlash) return;
-
-            try {
-                await cmd.runSlash(client, interaction);
-            } catch (err) {
-                console.error(`[Slash Command Error] ${interaction.commandName}:`, err);
-                const errPayload = {
-                    components: [
-                        new ContainerBuilder()
-                            .addTextDisplayComponents(new TextDisplayBuilder().setContent("An error occurred while executing this command."))
-                    ],
-                    flags: MessageFlags.IsComponentsV2 | 64,
-                };
-
-                if (interaction.replied || interaction.deferred) {
-                    await interaction.followUp(errPayload).catch(() => {});
-                } else {
-                    await interaction.reply(errPayload).catch(() => {});
-                }
-            }
-            return;
+            return interaction.reply({
+                content: "Slash commands are not supported. Please use the prefix command instead.",
+                flags: 64 // Ephemeral
+            }).catch(() => {});
         }
 
         if (!interaction.isButton()) return;
