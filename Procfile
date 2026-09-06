@@ -1,3 +1,2 @@
 ```text
-web: node cluster.js
-```
+web: node src/cluster.js
